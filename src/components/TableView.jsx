@@ -24,7 +24,6 @@ export default function TableView({ config, editingRow, setEditingRow }) {
   // Load table rows
   useEffect(() => {
     loadRows();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [table]);
 
   async function loadRows() {

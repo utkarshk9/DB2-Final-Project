@@ -144,7 +144,7 @@ export const tableConfigs = {
     id: "daily_schedule",
     label: "Daily Schedule (Assignments)",
     table: "daily_schedule",
-    primaryKey: "appointment_id", // composite PK in DB; UI uses appointment_id as key
+    primaryKey: "appointment_id", 
     defaultOrderBy: "time",
     description: "Links appointments to staff and specific times.",
     fields: [
@@ -249,7 +249,7 @@ export const tableConfigs = {
     id: "prescription_items",
     label: "Prescription Items",
     table: "prescription_item",
-    primaryKey: "din_id", // composite PK; UI uses DIN as key
+    primaryKey: "din_id", 
     defaultOrderBy: "prescription_id",
     description: "Links prescriptions to drugs with quantities and dosage.",
     fields: [
@@ -283,7 +283,7 @@ export const tableConfigs = {
     ],
   },
 
-  // LAB LOG (raw log table)
+  // LAB LOG 
   lab_logs: {
     id: "lab_logs",
     label: "Lab Logs",
@@ -369,7 +369,7 @@ export const tableConfigs = {
     id: "diagnosis_item",
     label: "Diagnosis Items",
     table: "diagnosis_item",
-    primaryKey: "diagnosis_id", // composite in DB with appointment_id
+    primaryKey: "diagnosis_id", 
     defaultOrderBy: "diagnosis_id",
     description: "Diagnosis assigned to appointments.",
     fields: [
@@ -378,7 +378,7 @@ export const tableConfigs = {
     ],
   },
 
-  // PATIENT HISTORY (normalized)
+  // PATIENT HISTORY 
   patient_history: {
     id: "patient_history",
     label: "Patient History (Entries)",
@@ -423,7 +423,7 @@ export const tableConfigs = {
     id: "patient_coverage",
     label: "Patient Coverage",
     table: "patient_coverage",
-    primaryKey: "patient_id", // composite with coverage_code
+    primaryKey: "patient_id", 
     defaultOrderBy: "patient_id",
     description: "Mapping between patients and coverage plans.",
     fields: [
@@ -576,15 +576,14 @@ export const tableConfigs = {
     table: "vw_monthly_activity_report",
     readOnly: true,
     primaryKey: null,
-    defaultOrderBy: "month_date",
+    defaultOrderBy: "month_label",
     description:
       "Monthly roll-up of visits, surgeries/procedures, labs, deliveries, and prescriptions.",
     fields: [
-      { name: "month_date", label: "Month" },
+      { name: "month_label", label: "Year-Month" },
       { name: "total_visits", label: "Total visits" },
       { name: "total_surgeries_procedures", label: "Surgeries / procedures" },
       { name: "total_lab_tests", label: "Lab tests" },
-      { name: "total_deliveries", label: "Deliveries" },
       { name: "total_prescriptions", label: "Prescriptions" },
     ],
   },
@@ -605,46 +604,41 @@ export const tableConfigs = {
       "Visit, coverage, diagnosis, and fee details formatted for insurance statement use.",
     fields: [
       // appointment + timing
+      { name: "invoice_id", label: "Invoice ID" },
+      { name: "issue_date", label: "Invoice date" },
       { name: "appointment_id", label: "Appt ID" },
-      { name: "appointment_time", label: "Time" },
       { name: "visit_type", label: "Visit type" },
-      { name: "appointment_status", label: "Status" },
-      { name: "room_id", label: "Room" },
+      { name: "status", label: "Appointment Status" },
+
 
       // patient
       { name: "patient_id", label: "Patient ID" },
       { name: "patient_first_name", label: "Patient first" },
       { name: "patient_last_name", label: "Patient last" },
-      { name: "date_of_birth", label: "DOB" },
-
-      // coverage
+      { name: "insurance_info", label: "Insurance info" },
       { name: "coverage_code", label: "Coverage code" },
       { name: "coverage_provider", label: "Coverage provider" },
       { name: "coverage_type", label: "Coverage type" },
-      { name: "policy_number", label: "Policy number" },
-      { name: "policy_expiry", label: "Policy expiry" },
-      { name: "copay_percent", label: "Copay %" },
-
-      // physician / staff
-      { name: "staff_id", label: "Staff ID" },
-      { name: "staff_first_name", label: "Physician first" },
-      { name: "staff_last_name", label: "Physician last" },
-      { name: "staff_role", label: "Role" },
-      { name: "specialization", label: "Specialization" },
-
-      // diagnosis
-      { name: "diagnosis_id", label: "Diagnosis ID" },
-      { name: "diagnosis_description", label: "Diagnosis" },
-      { name: "treatment_plan", label: "Treatment plan" },
+     
+      // staff overseeing appointment
+      {name:"staff_id", label: "Staff ID"},
+      {name:"staff_first_name", label: "Staff first"},
+      {name:"staff_last_name", label: "Staff last"},
+      {name:"staff_role", label: "Staff role"},      
+      {name:"specialization", label: "Specialization"},
+      {name:"diagnosis_id", label: "Diagnosis ID"},
+      {name:"diagnosis_description", label: "Diagnosis description"},
+      {name:"treatment_plan", label: "Treatment plan"},
 
       // billing
-      { name: "billing_id", label: "Billing ID" },
-      { name: "fee_amount", label: "Fee amount" },
-      { name: "payment_method", label: "Payment method" },
-      { name: "payment_status", label: "Payment status" },
-      { name: "balance_due", label: "Balance due" },
+      {name:"billing_id", label: "Billing ID"},
+      {name:"fee_amount", label: "Fee amount"},
+      {name:"payment_method", label: "Payment method"},
+      {name:"payment_status", label: "Payment status"},
     ],
   },
+
+
 
   // PATIENT MONTHLY STATEMENT
   vw_patient_monthly_statement: {
@@ -670,5 +664,6 @@ export const tableConfigs = {
 
 };
 
+// Flattened list of all table configs for routing and UI iteration.
 export const tableList = Object.values(tableConfigs);
 

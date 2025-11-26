@@ -7,7 +7,7 @@ export default function CrudPage() {
   const { tableId } = useParams();
   const navigate = useNavigate();
 
-  // Fallback to "patient" if URL is missing/invalid
+
   const currentId = tableId && tableConfigs[tableId] ? tableId : "patient";
   const config = tableConfigs[currentId];
 

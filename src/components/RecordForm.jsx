@@ -1,7 +1,12 @@
+/**
+ * Dynamic form renderer for CRUD operations.
+ */
 
+// Importing necessary modules and hooks
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
 
+// Main RecordForm component
 export default function RecordForm({
   config,
   initialValues,
@@ -9,30 +14,39 @@ export default function RecordForm({
   onCancel,
   saving,
 }) {
+  
   const { fields, primaryKey } = config;
 
+  // Local form state, initialized on load or edit
   const [values, setValues] = useState({});
 
+  // Cache for foreign-key dropdown option sets
   const [fkOptions, setFkOptions] = useState({});
 
-
+  /**
+   * Getting the list of fields that actually belong in the form.
+   */
   const formFields = fields.filter((f) => {
     if (f.name === primaryKey) return false;
     if (f.inForm === false) return false;
     return true;
   });
 
-  // initialize values when editing / creating
+  /**
+   * Populating the form state when switching between a new record and an edit record.
+   */
   useEffect(() => {
     setValues(initialValues || {});
   }, [initialValues]);
 
-  // load FK options for any field with type "fk-select"
+  /**
+   * Load foreign-key options for any fields declared with type: "fk-select"
+   */
   useEffect(() => {
     async function loadForeignKeyOptions() {
       const result = {};
-
       const fkFields = formFields.filter((f) => f.type === "fk-select");
+
       for (const field of fkFields) {
         const { foreignTable, foreignLabel, foreignValue } = field;
         if (!foreignTable || !foreignLabel || !foreignValue) continue;
@@ -42,13 +56,13 @@ export default function RecordForm({
           .select(`${foreignValue}, ${foreignLabel}`)
           .order(foreignLabel, { ascending: true });
 
-        if (!error && data) {
-          result[field.name] = data;
-        } else if (error) {
+        if (error) {
           console.error(
             `Error loading FK options for ${field.name} from ${foreignTable}:`,
             error.message
           );
+        } else if (data) {
+          result[field.name] = data;
         }
       }
 
@@ -56,21 +70,27 @@ export default function RecordForm({
     }
 
     loadForeignKeyOptions();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [config.table]); // reload if we switch to a different table config
+  }, 
+  // Reloads the FK options any time the CRUD module changes
+  [config.table]); 
 
+  // Helper for updating form fields
   const handleChange = (name, value) => {
     setValues((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Form submission handler
   const handleSubmit = (e) => {
     e.preventDefault();
     onSave(values);
   };
 
   return (
+   
     <form onSubmit={handleSubmit} className="space-y-4">
+      {/* Responsive two-column layout for form fields */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+         {/* Dynamically render form controls from configuration metadata */}
         {formFields.map((field) => {
           const value = values[field.name] ?? "";
 
@@ -85,7 +105,9 @@ export default function RecordForm({
             </label>
           );
 
-          // -------- TEXTAREA --------
+          /**
+           * TEXTAREA
+           */
           if (field.type === "textarea") {
             return (
               <div key={field.name} className="flex flex-col">
@@ -95,13 +117,17 @@ export default function RecordForm({
                   value={value}
                   required={field.required}
                   onChange={(e) => handleChange(field.name, e.target.value)}
-                  className="min-h-[70px] rounded-md border border-slate-300 bg-white px-2 py-1 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="min-h-[70px] rounded-md border border-slate-300 bg-white px-2 py-1 text-sm shadow-sm 
+                             focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 />
               </div>
             );
           }
 
-          // -------- STATIC SELECT (options in config) --------
+          /**
+           * STATIC SELECT
+           * Config-driven dropdown with predefined options
+           */
           if (field.type === "select") {
             return (
               <div key={field.name} className="flex flex-col">
@@ -111,7 +137,8 @@ export default function RecordForm({
                   value={value}
                   required={field.required}
                   onChange={(e) => handleChange(field.name, e.target.value)}
-                  className="rounded-md border border-slate-300 bg-white px-2 py-1 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="rounded-md border border-slate-300 bg-white px-2 py-1 text-sm shadow-sm 
+                             focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="">Select…</option>
                   {(field.options || []).map((opt) => (
@@ -124,9 +151,13 @@ export default function RecordForm({
             );
           }
 
-          // -------- FK SELECT (dynamic from another table) --------
+          /**
+           * FOREIGN-KEY SELECT
+           * Dropdown populated from Supabase query results
+           */
           if (field.type === "fk-select") {
             const options = fkOptions[field.name] || [];
+
             return (
               <div key={field.name} className="flex flex-col">
                 {label}
@@ -135,7 +166,8 @@ export default function RecordForm({
                   value={value}
                   required={field.required}
                   onChange={(e) => handleChange(field.name, e.target.value)}
-                  className="rounded-md border border-slate-300 bg-white px-2 py-1 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                  className="rounded-md border border-slate-300 bg-white px-2 py-1 text-sm shadow-sm 
+                             focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
                 >
                   <option value="">Select…</option>
                   {options.map((opt) => (
@@ -151,7 +183,9 @@ export default function RecordForm({
             );
           }
 
-          // -------- CHECKBOX --------
+          /**
+           * CHECKBOX
+           */
           if (field.type === "checkbox") {
             return (
               <div key={field.name} className="flex items-center gap-2">
@@ -172,9 +206,13 @@ export default function RecordForm({
             );
           }
 
-          // -------- FALLBACK: regular input (text, number, date, time, etc.) --------
+          /**
+           * FALLBACK INPUT
+           * Handles text, number, date, time, etc.
+           */
           const type =
-            field.type && !["textarea", "select", "fk-select"].includes(field.type)
+            field.type &&
+            !["textarea", "select", "fk-select"].includes(field.type)
               ? field.type
               : "text";
 
@@ -187,26 +225,31 @@ export default function RecordForm({
                 value={value}
                 required={field.required}
                 onChange={(e) => handleChange(field.name, e.target.value)}
-                className="rounded-md border border-slate-300 bg-white px-2 py-1 text-sm shadow-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
+                className="rounded-md border border-slate-300 bg-white px-2 py-1 text-sm shadow-sm 
+                           focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500"
               />
             </div>
           );
         })}
       </div>
 
+      {/* Action buttons */}
       <div className="flex gap-2">
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex items-center rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-60"
+          className="inline-flex items-center rounded-full bg-blue-600 px-4 py-1.5 text-xs font-semibold 
+                     text-white shadow-sm transition hover:bg-blue-700 disabled:opacity-60"
         >
           {saving ? "Saving…" : "Save"}
         </button>
+
         <button
           type="button"
           onClick={onCancel}
           disabled={saving}
-          className="inline-flex items-center rounded-full border border-slate-300 bg-white px-4 py-1.5 text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60"
+          className="inline-flex items-center rounded-full border border-slate-300 bg-white px-4 py-1.5 
+                     text-xs font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 disabled:opacity-60"
         >
           Cancel
         </button>
