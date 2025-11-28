@@ -61,6 +61,8 @@ Showing each practitioners schedule for the day.
 ## Getting Started
 
 -- Open Supabase and copy and paste the tableCreation.sql file contents into a sql script.
+
+
 -- Copy the required ANON Key and URL to an .env to your host
 
 From the project root:
