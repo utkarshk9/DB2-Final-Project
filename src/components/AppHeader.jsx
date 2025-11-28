@@ -1,45 +1,134 @@
-import { Link } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 
+/**
+ * AppHeader component that displays the application header with navigation links.
+ * @returns {JSX.Element} The application header with navigation links.
+ */
 export default function AppHeader() {
+
+  // Styling for navigation links
+  const base = "text-sm text-blue-700 hover:underline";
+  const active = "font-semibold underline";
+
   return (
     <header className="w-full bg-white border-b shadow-sm">
-      {/* LEFT-aligned wrapper */}
       <div className="w-full px-8 py-4 flex items-center gap-10">
-
-        {/* Logo */}
-        <div className="flex items-center">
-          <span className="text-xl font-semibold tracking-tight text-gray-900">
-            ClinicalDB
-          </span>
+        
+      {/* Our Logo */}
+        <div className="text-xl font-semibold tracking-tight text-gray-900">
+          ClinicalDB
         </div>
 
-        {/* Nav */}
+        {/* Creating the navigation */}
         <nav className="flex items-center gap-6 text-sm font-medium">
 
-          {/* Data */}
-          <Link to="/crud/patient" className="nav-pill">Patients</Link>
-          <Link to="/crud/appointments" className="nav-pill">Appointments</Link>
-          <Link to="/crud/staff" className="nav-pill">Staff</Link>
-          <Link to="/crud/rooms" className="nav-pill">Rooms</Link>
-          <Link to="/crud/billing" className="nav-pill">Billing</Link>
+          {/* CRUD Section */}
+          <NavLink
+            to="/patients"
+            className={({ isActive }) => 
+              `${base} ${isActive ? active : ""}`
+            }
+          >
+            Patients
+          </NavLink>
 
+          <NavLink
+            to="/staff"
+            className={({ isActive }) => 
+              `${base} ${isActive ? active : ""}`
+            }
+          >
+            Staff
+          </NavLink>
+
+          <NavLink
+            to="/rooms"
+            className={({ isActive }) => 
+              `${base} ${isActive ? active : ""}`
+            }
+          >
+            Rooms
+          </NavLink>
+
+          <NavLink
+            to="/room-types"
+            className={({ isActive }) => 
+              `${base} ${isActive ? active : ""}`
+            }
+          >
+            Room Types
+          </NavLink>
+
+          <NavLink
+            to="/drugs"
+            className={({ isActive }) => 
+              `${base} ${isActive ? active : ""}`
+            }
+          >
+            Drugs
+          </NavLink>
+
+          <NavLink
+            to="/coverage"
+            className={({ isActive }) => 
+              `${base} ${isActive ? active : ""}`
+            }
+          >
+            Coverage Plans
+          </NavLink>
+
+          {/* Divider */}
           <span className="h-5 w-px bg-gray-300" />
 
-          {/* Schedules */}
-          <Link to="/crud/weekly_staff_calendar" className="nav-pill">Weekly Coverage</Link>
-          <Link to="/crud/daily_schedule" className="nav-pill">Daily Master</Link>
-          <Link to="/crud/vw_individual_practitioner_schedule" className="nav-pill">Practitioner Schedule</Link>
+          {/* Schedule section made with view */}
+          <NavLink
+            to="/daily-schedule"
+            className={({ isActive }) => 
+              `${base} ${isActive ? active : ""}`
+            }
+          >
+            Daily Schedule
+          </NavLink>
 
+          <NavLink
+            to="/practitioner-schedule"
+            className={({ isActive }) =>
+              `${base} ${isActive ? active : ""}`
+            }
+          >
+            Practitioner Schedule
+          </NavLink>
+
+          <NavLink
+            to="/prescription-history"
+            className={({ isActive }) =>
+              `${base} ${isActive ? active : ""}`
+            }
+          >
+            Prescription History
+          </NavLink>
+
+          {/* Divider */}
           <span className="h-5 w-px bg-gray-300" />
 
-          {/* Reports */}
-          <Link to="/crud/vw_daily_appointments" className="nav-pill">Daily View</Link>
-          <Link to="/crud/vw_billing_invoices" className="nav-pill">Billing View</Link>
-          <Link to="/crud/vw_prescription_history" className="nav-pill">Prescription View</Link>
-          <Link to="/crud/vw_physician_insurance_statement" className="nav-pill">Insurance Forms</Link>
-          <Link to="/crud/vw_patient_monthly_statement" className="nav-pill"> Patient Statements</Link>
-          <Link to="/crud/vw_monthly_activity_report" className="nav-pill">Activity Report</Link>
+          {/* Reports sections made with views */}
+          <NavLink
+            to="/billing-view"
+            className={({ isActive }) =>
+              `${base} ${isActive ? active : ""}`
+            }
+          >
+            Billing View
+          </NavLink>
 
+          <NavLink
+            to="/monthly-activity"
+            className={({ isActive }) =>
+              `${base} ${isActive ? active : ""}`
+            }
+          >
+            Monthly Activity
+          </NavLink>
         </nav>
       </div>
     </header>
